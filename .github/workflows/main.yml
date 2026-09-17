@@ -431,10 +431,13 @@ jobs:
         git -C protobuf submodule update --init --recursive
     - name: Build Protobuf
       if: steps.cache.outputs.cache-hit != 'true'
+      env:
+        CC: clang
+        CXX: clang++
       run: |
         mkdir -p "$GITHUB_WORKSPACE/protobuf-build"
         ./autogen.sh
-        ./configure --prefix="$GITHUB_WORKSPACE/protobuf-build"
+        CC=clang CXX=clang++ ./configure --prefix="$GITHUB_WORKSPACE/protobuf-build"
         make -j8
         make install -j8
       working-directory: protobuf

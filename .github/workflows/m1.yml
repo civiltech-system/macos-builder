@@ -118,6 +118,11 @@ jobs:
     - name: Install Deps
       if: ${{ steps.cache.outputs.cache-hit != 'true' && matrix.deps != '' }}
       run: ${{ matrix.deps }}
+    - name: Install Metal Toolchain
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: |
+        sudo xcodebuild -downloadComponent MetalToolchain
+        xcrun --find metal
     - name: Build angle
       if: steps.cache.outputs.cache-hit != 'true'
       shell: pwsh

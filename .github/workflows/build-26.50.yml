@@ -1,0 +1,23 @@
+name: Build Minecraft Bedrock Launcher 26.50 for macOS
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  id-token: write
+
+jobs:
+  build:
+    uses: ./.github/workflows/main.yml
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+    with:
+      mcpelauncher-ref: "v1.8.1"
+      mcpelauncher-ui-ref: "ng"
+      msa-ref: "master"
+      build-m1: true
+      publish: false
