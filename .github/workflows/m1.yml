@@ -121,8 +121,12 @@ jobs:
     - name: Install Metal Toolchain
       if: steps.cache.outputs.cache-hit != 'true'
       run: |
-        sudo xcodebuild -downloadComponent MetalToolchain
+        sudo xcode-select -s /Applications/Xcode_26.6.app
+        sudo xcodebuild -runFirstLaunch
+        xcodebuild -downloadComponent metalToolchain
+        xcodebuild -runFirstLaunch -checkForNewerComponents
         xcrun --find metal
+        xcrun metal --version
     - name: Build angle
       if: steps.cache.outputs.cache-hit != 'true'
       shell: pwsh
