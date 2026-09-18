@@ -34,7 +34,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - OS: macos-latest
+          - OS: macos-15
             deps: ''
             sdkroot: ''
             version: '11.0'
@@ -96,7 +96,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - OS: macos-latest
+          - OS: macos-15
             deps: ''
             version: '11.0'
             arch: 'arm64'
@@ -118,15 +118,6 @@ jobs:
     - name: Install Deps
       if: ${{ steps.cache.outputs.cache-hit != 'true' && matrix.deps != '' }}
       run: ${{ matrix.deps }}
-    - name: Install Metal Toolchain
-      if: steps.cache.outputs.cache-hit != 'true'
-      run: |
-        sudo xcode-select -s /Applications/Xcode_26.6.app
-        sudo xcodebuild -runFirstLaunch
-        xcodebuild -downloadComponent metalToolchain
-        xcodebuild -runFirstLaunch -checkForNewerComponents
-        xcrun --find metal
-        xcrun metal --version
     - name: Build angle
       if: steps.cache.outputs.cache-hit != 'true'
       shell: pwsh
@@ -186,7 +177,7 @@ jobs:
       matrix:
         include:
           - AppImage: false
-            OS: macos-latest
+            OS: macos-15
             arch: arm64
             version: "11.0"
             container: '{}'

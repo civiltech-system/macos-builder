@@ -417,8 +417,9 @@ jobs:
       if: steps.cache.outputs.cache-hit != 'true'
       run: |
         cd "$SDKROOT/usr/include"
-        CLANG_BIN="$(xcrun --find clang++)"
-        CXX_HEADERS="$(cd "$(dirname "$CLANG_BIN")/../include/c++" && pwd)"
+        CURRENT_SDK="$(env -u SDKROOT xcrun --sdk macosx --show-sdk-path)"
+        CXX_HEADERS="$CURRENT_SDK/usr/include/c++"
+        test -f "$CXX_HEADERS/v1/atomic"
         ln -sfn "$CXX_HEADERS" c++
         test -f c++/v1/atomic
     - name: Install brew dependencies
@@ -551,19 +552,19 @@ jobs:
       if: inputs.build-m1
       uses: actions/download-artifact@v4
       with:
-        name: angle-macos-latest-11.0-arm64
+        name: angle-macos-15-11.0-arm64
         path: "m1-artifacts"
     - name: download m1 openssl
       if: inputs.build-m1
       uses: actions/download-artifact@v4
       with:
-        name: openssl-macos-latest-11.0-arm64
+        name: openssl-macos-15-11.0-arm64
         path: "m1-artifacts"
     - name: download m1 mcpelauncher
       if: inputs.build-m1
       uses: actions/download-artifact@v4
       with:
-        name: mcpelauncher-macos-latest-11.0-arm64
+        name: mcpelauncher-macos-15-11.0-arm64
         path: "m1-artifacts"
     - name: Cache libcxx32
       id: libcxx32-llvm
