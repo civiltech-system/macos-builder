@@ -417,7 +417,10 @@ jobs:
       if: steps.cache.outputs.cache-hit != 'true'
       run: |
         cd "$SDKROOT/usr/include"
-        ln -s "$(xcrun --sdk macosx --show-sdk-path)/usr/include/c++" c++
+        CLANG_BIN="$(xcrun --find clang++)"
+        CXX_HEADERS="$(cd "$(dirname "$CLANG_BIN")/../include/c++" && pwd)"
+        ln -sfn "$CXX_HEADERS" c++
+        test -f c++/v1/atomic
     - name: Install brew dependencies
       if: steps.cache.outputs.cache-hit != 'true'
       run: |
