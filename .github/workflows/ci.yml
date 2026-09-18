@@ -13,6 +13,12 @@ on:
         - build
         - draft
         - release
+
+permissions:
+  contents: read
+  actions: read
+  id-token: write
+
 jobs:
   read-repo-files:
     runs-on: ubuntu-latest
@@ -26,8 +32,14 @@ jobs:
       mcpelauncher-ref: ${{ steps.out.outputs.mcpelauncher-ref }}
   ci:
     needs: read-repo-files
-    if: (!cancelled())
+    # The fork uses build-26.50.yml. Keep the upstream release workflow from
+    # publishing or starting a duplicate build after every push to the fork.
+    if: ${{ !cancelled() && github.repository == 'minecraft-linux/macos-builder' }}
     uses: ./.github/workflows/main.yml
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
     with:
       publish: ${{ github.event_name == 'push' && github.server_url == 'https://github.com' || github.event_name == 'workflow_dispatch' && inputs.type == 'release' }}
       use-repo-files: true
