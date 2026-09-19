@@ -649,11 +649,14 @@ jobs:
         echo SDKROOT=${{ github.workspace }}/${{ secrets.MacOSX1014sdk && 'MacOSX10.14.sdk' || '../MacOSX-SDKs/MacOSX10.13.sdk' }} >> $GITHUB_ENV
     - name: Prepare Legacy sdk
       run: |
-        TOOLCHAIN_USR="$(dirname "$(dirname "$(xcrun --find clang)")")"
-        CXX_HEADERS="$TOOLCHAIN_USR/include/c++"
-        test -f "$CXX_HEADERS/v1/cstdlib"
+        CXX_INCLUDE="$(env -u SDKROOT xcrun clang++ -E -x c++ - -v </dev/null 2>&1 |
+          sed -n '/search starts here:/,/End of search list./p' |
+          sed -n 's@^ \(/.*\/c++/v1\)$@\1@p' | head -n 1)"
+        echo "Clang C++ headers: $CXX_INCLUDE"
+        test -f "$CXX_INCLUDE/cstdlib"
         cd "$SDKROOT/usr/include"
-        ln -sfn "$CXX_HEADERS" c++
+        mkdir -p c++
+        ln -sfn "$CXX_INCLUDE" c++/v1
         test -f c++/v1/cstdlib
     - name: Get Source libzip
       run: |
