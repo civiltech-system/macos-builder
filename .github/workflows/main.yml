@@ -649,10 +649,12 @@ jobs:
         echo SDKROOT=${{ github.workspace }}/${{ secrets.MacOSX1014sdk && 'MacOSX10.14.sdk' || '../MacOSX-SDKs/MacOSX10.13.sdk' }} >> $GITHUB_ENV
     - name: Prepare Legacy sdk
       run: |
-        DEST="$PWD/libcxx64-build/include/c++"
+        TOOLCHAIN_USR="$(dirname "$(dirname "$(xcrun --find clang)")")"
+        CXX_HEADERS="$TOOLCHAIN_USR/include/c++"
+        test -f "$CXX_HEADERS/v1/cstdlib"
         cd "$SDKROOT/usr/include"
-        #ln -s "$(xcrun --sdk macosx --show-sdk-path)/usr/include/c++" c++
-        ln -s "$DEST" c++
+        ln -sfn "$CXX_HEADERS" c++
+        test -f c++/v1/cstdlib
     - name: Get Source libzip
       run: |
         git clone https://github.com/nih-at/libzip libzip
